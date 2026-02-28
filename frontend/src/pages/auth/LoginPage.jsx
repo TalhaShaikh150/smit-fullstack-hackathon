@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Eye, EyeOff, LogIn, ArrowRight, AlertCircle } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  LogIn,
+  ArrowRight,
+  AlertCircle,
+  Shield,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,8 +25,24 @@ import { selectCurrentUser } from "@/features/auth/authSlice";
 import { ROUTES } from "@/utils/constants";
 import { toast } from "sonner";
 
+const TEST_CREDENTIALS = {
+  patient: {
+    email: "patient@clinic.com",
+    password: "Patient@123",
+  },
+  doctor: {
+    email: "doctor@clinic.com",
+    password: "Doctor@123",
+  },
+  receptionist: {
+    email: "receptionist@clinic.com",
+    password: "Receptionist@123",
+  },
+};
+
 const LoginPage = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [userType, setUserType] = useState("patient"); // patient | doctor | receptionist
+  const [formData, setFormData] = useState(TEST_CREDENTIALS.patient);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -42,6 +65,12 @@ const LoginPage = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleUserTypeChange = (newUserType) => {
+    setUserType(newUserType);
+    setFormData(TEST_CREDENTIALS[newUserType]);
+    setErrors({});
   };
 
   const handleChange = (e) => {
@@ -107,6 +136,49 @@ const LoginPage = () => {
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-5 pt-6">
+            {/* User Type Toggle */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Login As:</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: "patient", label: "Patient", icon: "👤" },
+                  { value: "doctor", label: "Doctor", icon: "👨‍⚕️" },
+                  {
+                    value: "receptionist",
+                    label: "Receptionist",
+                    icon: "📋",
+                  },
+                ].map((type) => (
+                  <button
+                    key={type.value}
+                    type="button"
+                    onClick={() => handleUserTypeChange(type.value)}
+                    className={`p-3 rounded-lg border-2 transition-all text-center ${
+                      userType === type.value
+                        ? "border-primary bg-primary/10"
+                        : "border-muted hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="text-lg mb-1">{type.icon}</div>
+                    <div className="text-xs font-medium">{type.label}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Demo Info */}
+            <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+              <p className="text-xs font-semibold text-amber-900 mb-1">
+                💡 Demo Credentials (Auto-filled)
+              </p>
+              <p className="text-xs text-amber-800">
+                <strong>Email:</strong> {formData.email}
+              </p>
+              <p className="text-xs text-amber-800">
+                <strong>Password:</strong> {formData.password}
+              </p>
+            </div>
+
             {/* Email Field */}
             <div className="space-y-3">
               <Label htmlFor="email" className="text-sm font-medium">
@@ -199,6 +271,17 @@ const LoginPage = () => {
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
+            </Button>
+
+            {/* Admin Login Button */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-11 gap-2 border-2 border-red-200 hover:bg-red-50"
+              onClick={() => navigate("/admin/login")}
+            >
+              <Shield className="h-4 w-4 text-red-600" />
+              <span className="text-red-600 font-semibold">Admin Login</span>
             </Button>
 
             <div className="relative">

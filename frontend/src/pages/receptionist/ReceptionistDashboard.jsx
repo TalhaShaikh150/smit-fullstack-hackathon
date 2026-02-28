@@ -1,51 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { Card } from "../../components/ui/card";
+import { Loader2 } from "lucide-react";
+import {
+  useGetAppointmentsQuery,
+  useGetDoctorsQuery,
+} from "../../features/auth/authApi";
 
 const ReceptionistDashboard = () => {
   const user = useSelector(selectCurrentUser);
-  const [appointments, setAppointments] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: appointmentsRes, isLoading: appointmentsLoading } =
+    useGetAppointmentsQuery();
+  const { data: doctorsRes, isLoading: doctorsLoading } = useGetDoctorsQuery();
 
-  useEffect(() => {
-    fetchReceptionistData();
-  }, []);
+  const appointments = appointmentsRes?.data || [];
+  const doctors = doctorsRes?.data || [];
 
-  const fetchReceptionistData = async () => {
-    try {
-      setLoading(true);
-
-      // Fetch all appointments
-      const appointmentsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/appointments`,
-        {
-          credentials: "include",
-        },
-      );
-      const appointmentsData = await appointmentsRes.json();
-      setAppointments(appointmentsData.data || []);
-
-      // Fetch doctors
-      const doctorsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/staff/doctors`,
-        {
-          credentials: "include",
-        },
-      );
-      const doctorsData = await doctorsRes.json();
-      setDoctors(doctorsData.data || []);
-    } catch (error) {
-      console.error("Error fetching receptionist data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="p-6">Loading...</div>;
-  }
+  const isLoading = appointmentsLoading || doctorsLoading;
 
   const todayAppointments = appointments.filter((a) => {
     const apt = new Date(a.appointmentDate);
@@ -56,6 +28,15 @@ const ReceptionistDashboard = () => {
   const scheduledAppointments = appointments.filter(
     (a) => a.status === "scheduled",
   );
+
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center gap-2">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span>Loading dashboard...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -110,9 +91,6 @@ const ReceptionistDashboard = () => {
                       </span>
                     </p>
                   </div>
-                  <button className="px-4 py-2 bg-green-100 text-green-600 rounded hover:bg-green-200">
-                    Mark Done
-                  </button>
                 </div>
               </Card>
             ))}

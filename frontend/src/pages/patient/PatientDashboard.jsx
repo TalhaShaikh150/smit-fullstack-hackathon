@@ -1,54 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { Card } from "../../components/ui/card";
+import { Loader2 } from "lucide-react";
+import {
+  useGetPatientAppointmentsQuery,
+  useGetPrescriptionsQuery,
+} from "../../features/auth/authApi";
 
 const PatientDashboard = () => {
   const user = useSelector(selectCurrentUser);
-  const [appointments, setAppointments] = useState([]);
-  const [prescriptions, setPrescriptions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: appointmentsRes, isLoading: appointmentsLoading } =
+    useGetPatientAppointmentsQuery(user?._id);
+  const { data: prescriptionsRes, isLoading: prescriptionsLoading } =
+    useGetPrescriptionsQuery();
 
-  useEffect(() => {
-    fetchPatientData();
-  }, []);
+  const appointments = appointmentsRes?.data || [];
+  const prescriptions = prescriptionsRes?.data || [];
 
-  const fetchPatientData = async () => {
-    try {
-      setLoading(true);
-      // Fetch appointments
-      const appointmentsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/appointments`,
-        {
-          credentials: "include",
-        },
-      );
-      const appointmentsData = await appointmentsRes.json();
-      setAppointments(appointmentsData.data || []);
-
-      // Fetch prescriptions
-      const prescriptionsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/prescriptions`,
-        {
-          credentials: "include",
-        },
-      );
-      const prescriptionsData = await prescriptionsRes.json();
-      setPrescriptions(prescriptionsData.data || []);
-    } catch (error) {
-      console.error("Error fetching patient data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="p-6">Loading...</div>;
-  }
+  const isLoading = appointmentsLoading || prescriptionsLoading;
 
   const upcomingAppointments = appointments.filter(
     (a) => new Date(a.appointmentDate) > new Date() && a.status === "scheduled",
   );
+
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center gap-2">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span>Loading dashboard...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -95,9 +78,15 @@ const PatientDashboard = () => {
                     </p>
                     <p className="text-sm text-gray-500 mt-1">{apt.reason}</p>
                   </div>
-                  <button className="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200">
-                    Cancel
-                  </button>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      apt.status === "scheduled"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
+                    {apt.status}
+                  </span>
                 </div>
               </Card>
             ))}
@@ -127,9 +116,15 @@ const PatientDashboard = () => {
                       {new Date(prescription.issuedDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <button className="px-4 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
-                    Download PDF
-                  </button>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      prescription.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {prescription.status}
+                  </span>
                 </div>
               </Card>
             ))}

@@ -24,13 +24,10 @@ const staffProfileSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
     },
-    qualifications: [
-      {
-        degree: String,
-        institution: String,
-        year: Number,
-      },
-    ],
+    qualifications: {
+      type: String, // Simple string format: "MD, MBBS" or similar
+      trim: true,
+    },
     experience: {
       type: Number, // in years
     },

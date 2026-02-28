@@ -11,16 +11,21 @@ import PublicRoute from "@/components/shared/PublicRoute";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
+import DoctorsPage from "@/pages/DoctorsPage";
 import LoginPage from "@/pages/auth/LoginPage";
+import AdminLoginPage from "@/pages/auth/AdminLoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import ProfilePage from "@/pages/ProfilePage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
 // Role-based dashboards
 import PatientDashboard from "@/pages/patient/PatientDashboard";
+import BookAppointment from "@/pages/patient/BookAppointment";
 import DoctorDashboard from "@/pages/doctor/DoctorDashboard";
 import ReceptionistDashboard from "@/pages/receptionist/ReceptionistDashboard";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import ManageStaffPage from "@/pages/admin/ManageStaffPage";
+import CheckInPage from "@/pages/receptionist/CheckInPage";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +45,10 @@ const router = createBrowserRouter([
         path: "contact",
         element: <ContactPage />,
       },
+      {
+        path: "doctors",
+        element: <DoctorsPage />,
+      },
 
       // ── Auth Pages (only non-logged-in users) ──
       {
@@ -47,6 +56,14 @@ const router = createBrowserRouter([
         element: (
           <PublicRoute>
             <LoginPage />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "admin/login",
+        element: (
+          <PublicRoute>
+            <AdminLoginPage />
           </PublicRoute>
         ),
       },
@@ -79,6 +96,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "book-appointment",
+        element: (
+          <ProtectedRoute allowedRoles={["patient"]}>
+            <BookAppointment />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "doctor/dashboard",
         element: (
           <ProtectedRoute allowedRoles={["doctor"]}>
@@ -99,6 +124,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["admin"]}>
             <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/manage-staff",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <ManageStaffPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "receptionist/check-in",
+        element: (
+          <ProtectedRoute allowedRoles={["receptionist"]}>
+            <CheckInPage />
           </ProtectedRoute>
         ),
       },

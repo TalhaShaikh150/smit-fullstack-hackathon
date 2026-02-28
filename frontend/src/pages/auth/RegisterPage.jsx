@@ -1,35 +1,36 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, UserPlus, ArrowRight, AlertCircle, Check, X } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Check,
+  X,
+  Stethoscope,
+  User,
+  ClipboardList,
+  Sparkles
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import useAuth from "@/hooks/useAuth";
 import { ROUTES } from "@/utils/constants";
 import { toast } from "sonner";
 
 const PasswordRequirement = ({ met, text }) => (
-  <div className="flex items-center gap-2 text-xs">
+  <div className={`flex items-center gap-2 text-xs transition-colors duration-300 ${met ? "text-emerald-600" : "text-slate-400"}`}>
     {met ? (
-      <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+      <Check className="h-3.5 w-3.5 flex-shrink-0" />
     ) : (
-      <X className="h-4 w-4 text-destructive flex-shrink-0" />
+      <div className="h-1.5 w-1.5 rounded-full bg-slate-300 ml-1 mr-1" />
     )}
-    <span className={met ? "text-muted-foreground" : "text-muted-foreground"}>
-      {text}
-    </span>
+    <span>{text}</span>
   </div>
 );
 
 const RegisterPage = () => {
+  const [userType, setUserType] = useState("patient");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,43 +44,24 @@ const RegisterPage = () => {
   const { register, isRegistering } = useAuth();
   const navigate = useNavigate();
 
-  // Password validation checks
+  // Validation Logic
   const passwordChecks = {
     minLength: formData.password.length >= 8,
     hasUpper: /[A-Z]/.test(formData.password),
-    hasLower: /[a-z]/.test(formData.password),
     hasNumber: /\d/.test(formData.password),
     hasSpecial: /[@$!%*?&#]/.test(formData.password),
   };
 
   const isPasswordValid = Object.values(passwordChecks).every((check) => check);
-  const passwordsMatch = formData.password && formData.password === formData.confirmPassword;
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!isPasswordValid) {
-      newErrors.password = "Password does not meet requirements";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (!passwordsMatch) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Invalid email address";
+    if (!isPasswordValid) newErrors.password = "Password is too weak";
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -87,9 +69,7 @@ const RegisterPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
@@ -102,243 +82,188 @@ const RegisterPage = () => {
       toast.success("Account created successfully!");
       navigate(ROUTES.HOME, { replace: true });
     } catch (err) {
-      const message =
-        err?.data?.message || "Registration failed. Please try again.";
-      toast.error(message);
-
-      if (err?.data?.errors?.length) {
-        const apiErrors = {};
-        err.data.errors.forEach((e) => {
-          apiErrors[e.field] = e.message;
-        });
-        setErrors(apiErrors);
-      }
+      toast.error(err?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gradient-to-br from-background via-background to-muted/30">
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -right-40 -bottom-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
-      </div>
-
-      <Card className="w-full max-w-md shadow-lg">
-        {/* Header */}
-        <CardHeader className="space-y-2 text-center bg-gradient-to-b from-primary/5 to-transparent pb-6">
-          <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <UserPlus className="h-6 w-6 text-primary" />
-          </div>
-          <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-          <CardDescription className="text-base">
-            Join our community and get started building
-          </CardDescription>
-        </CardHeader>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-5 pt-6">
-            {/* Name Field */}
-            <div className="space-y-3">
-              <Label htmlFor="name" className="text-sm font-medium">
-                Full Name
-              </Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="John Doe"
-                value={formData.name}
-                onChange={handleChange}
-                autoComplete="name"
-                className={`transition-colors ${
-                  errors.name
-                    ? "border-destructive focus-visible:ring-destructive"
-                    : ""
-                }`}
-              />
-              {errors.name && (
-                <p className="text-sm text-destructive flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4" />
-                  {errors.name}
-                </p>
-              )}
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-[Plus_Jakarta_Sans]">
+      
+      <div className="w-full max-w-md space-y-8 animate-in fade-in zoom-in-95 duration-500">
+        
+        {/* --- Header & Logo --- */}
+        <div className="text-center">
+          <Link to={ROUTES.HOME} className="inline-flex items-center gap-2.5 mb-6 group">
+            <div className="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform">
+               <Sparkles size={20} fill="currentColor" className="text-white/90" />
             </div>
+            <span className="text-2xl font-bold text-slate-800 tracking-tight font-[Outfit]">
+              Prescripto
+            </span>
+          </Link>
+          <h2 className="text-3xl font-bold text-slate-900 font-[Outfit]">Create Account</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Please fill in the details to get started.
+          </p>
+        </div>
 
-            {/* Email Field */}
+        <div className="bg-white px-8 py-8 shadow-xl shadow-slate-200/60 rounded-[2rem] border border-slate-100">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            
+            {/* --- Role Selection --- */}
             <div className="space-y-3">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email Address
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                value={formData.email}
-                onChange={handleChange}
-                autoComplete="email"
-                className={`transition-colors ${
-                  errors.email
-                    ? "border-destructive focus-visible:ring-destructive"
-                    : ""
-                }`}
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4" />
-                  {errors.email}
-                </p>
-              )}
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-3">
-              <Label htmlFor="password" className="text-sm font-medium">
-                Password
-              </Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleChange}
-                  autoComplete="new-password"
-                  className={`pr-10 transition-colors ${
-                    errors.password
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : ""
-                  }`}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
+              <Label className="text-xs font-semibold uppercase tracking-wider text-slate-500">I am a</Label>
+              <div className="grid grid-cols-3 gap-3 p-1 bg-slate-50 rounded-xl border border-slate-200">
+                {[
+                  { id: "patient", label: "Patient", icon: User },
+                  { id: "doctor", label: "Doctor", icon: Stethoscope },
+                  { id: "receptionist", label: "Staff", icon: ClipboardList },
+                ].map((role) => {
+                  const Icon = role.icon;
+                  const active = userType === role.id;
+                  return (
+                    <button
+                      key={role.id}
+                      type="button"
+                      onClick={() => setUserType(role.id)}
+                      className={`flex flex-col items-center justify-center gap-1 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        active
+                          ? "bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200"
+                          : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
+                      }`}
+                    >
+                      <Icon size={18} className={active ? "text-indigo-600" : "text-slate-400"} />
+                      {role.label}
+                    </button>
+                  );
+                })}
               </div>
-              
-              {/* Password Requirements */}
-              {formData.password && (
-                <div className="rounded-lg bg-muted/50 p-4 space-y-2">
-                  <p className="text-xs font-medium text-foreground">Password requirements:</p>
-                  <PasswordRequirement
-                    met={passwordChecks.minLength}
-                    text="At least 8 characters"
+            </div>
+
+            {/* --- Form Fields --- */}
+            {userType === 'patient' ? (
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <Label className="text-slate-700 font-medium">Full Name</Label>
+                  <Input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`h-12 rounded-xl border-slate-200 focus-visible:ring-indigo-600 bg-slate-50/50 ${errors.name ? "border-red-500 bg-red-50/50" : ""}`}
+                    placeholder="e.g. John Doe"
                   />
-                  <PasswordRequirement
-                    met={passwordChecks.hasUpper}
-                    text="At least one uppercase letter"
-                  />
-                  <PasswordRequirement
-                    met={passwordChecks.hasLower}
-                    text="At least one lowercase letter"
-                  />
-                  <PasswordRequirement
-                    met={passwordChecks.hasNumber}
-                    text="At least one number"
-                  />
-                  <PasswordRequirement
-                    met={passwordChecks.hasSpecial}
-                    text="At least one special character (@$!%*?&#)"
-                  />
+                  {errors.name && <p className="text-xs text-red-500 font-medium">{errors.name}</p>}
                 </div>
-              )}
-            </div>
 
-            {/* Confirm Password Field */}
-            <div className="space-y-3">
-              <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                Confirm Password
-              </Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  autoComplete="new-password"
-                  className={`pr-10 transition-colors ${
-                    errors.confirmPassword
-                      ? "border-destructive focus-visible:ring-destructive"
-                      : passwordsMatch && formData.confirmPassword
-                      ? "border-green-500"
-                      : ""
-                  }`}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
-                  aria-label="Toggle password visibility"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
+                <div className="space-y-2">
+                  <Label className="text-slate-700 font-medium">Email Address</Label>
+                  <Input
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`h-12 rounded-xl border-slate-200 focus-visible:ring-indigo-600 bg-slate-50/50 ${errors.email ? "border-red-500 bg-red-50/50" : ""}`}
+                    placeholder="name@example.com"
+                  />
+                  {errors.email && <p className="text-xs text-red-500 font-medium">{errors.email}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-slate-700 font-medium">Password</Label>
+                  <div className="relative">
+                    <Input
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleChange}
+                      className={`h-12 pr-10 rounded-xl border-slate-200 focus-visible:ring-indigo-600 bg-slate-50/50 ${errors.password ? "border-red-500 bg-red-50/50" : ""}`}
+                      placeholder="Create a password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  
+                  {/* Password Strength Indicator */}
+                  {formData.password && (
+                    <div className="grid grid-cols-2 gap-2 pt-1 pl-1">
+                      <PasswordRequirement met={passwordChecks.minLength} text="8+ characters" />
+                      <PasswordRequirement met={passwordChecks.hasUpper} text="Uppercase letter" />
+                      <PasswordRequirement met={passwordChecks.hasNumber} text="Number" />
+                      <PasswordRequirement met={passwordChecks.hasSpecial} text="Symbol" />
+                    </div>
                   )}
-                </button>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-slate-700 font-medium">Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className={`h-12 pr-10 rounded-xl border-slate-200 focus-visible:ring-indigo-600 bg-slate-50/50 ${errors.confirmPassword ? "border-red-500 bg-red-50/50" : ""}`}
+                      placeholder="Repeat password"
+                    />
+                     <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600"
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {errors.confirmPassword && <p className="text-xs text-red-500 font-medium">{errors.confirmPassword}</p>}
+                </div>
+
+                <Button 
+                  type="submit" 
+                  disabled={isRegistering}
+                  className="w-full h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg shadow-indigo-600/20 mt-4 transition-all hover:scale-[1.02]"
+                >
+                  {isRegistering ? "Creating Account..." : "Create Account"}
+                </Button>
               </div>
-              {errors.confirmPassword && (
-                <p className="text-sm text-destructive flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4" />
-                  {errors.confirmPassword}
-                </p>
-              )}
-              {passwordsMatch && formData.confirmPassword && (
-                <p className="text-sm text-green-600 flex items-center gap-2">
-                  <Check className="h-4 w-4" />
-                  Passwords match
-                </p>
-              )}
-            </div>
-          </CardContent>
+            ) : (
+              // --- Staff/Doctor Restriction Message ---
+              <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-center space-y-4">
+                 <div className="h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto text-indigo-600">
+                    <div className="font-bold text-xl">i</div>
+                 </div>
+                 <div>
+                    <h3 className="font-bold text-slate-900 font-[Outfit]">Restricted Access</h3>
+                    <p className="text-sm text-slate-500 mt-2 leading-relaxed">
+                       To ensure security, <b>{userType === 'doctor' ? 'Doctors' : 'Staff'}</b> must be registered by the Clinic Administrator.
+                    </p>
+                 </div>
+                 <Button variant="outline" className="w-full rounded-full border-slate-300" asChild>
+                    <Link to={ROUTES.CONTACT}>Contact Admin</Link>
+                 </Button>
+              </div>
+            )}
+            
+          </form>
 
-          {/* Footer */}
-          <CardFooter className="flex flex-col space-y-4 pt-6">
-            <Button
-              type="submit"
-              className="w-full h-11 gap-2"
-              disabled={isRegistering}
-            >
-              {isRegistering ? (
-                <>
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Creating account...
-                </>
-              ) : (
-                <>
-                  Create Account
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-
-            <p className="text-sm text-muted-foreground text-center">
+          {/* --- Footer Links --- */}
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-slate-500 text-sm">
               Already have an account?{" "}
-              <Link
-                to={ROUTES.LOGIN}
-                className="font-semibold text-primary hover:underline transition-colors"
-              >
-                Sign in
+              <Link to={ROUTES.LOGIN} className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline">
+                Login here
               </Link>
             </p>
-          </CardFooter>
-        </form>
-      </Card>
+          </div>
+        </div>
+
+        <p className="text-center text-xs text-slate-400">
+           &copy; {new Date().getFullYear()} Prescripto Clinic. All rights reserved.
+        </p>
+      </div>
     </div>
   );
 };

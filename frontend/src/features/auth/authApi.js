@@ -237,6 +237,171 @@ export const authApi = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+
+    // ── Register Doctor (Admin Only) ──
+    registerDoctor: builder.mutation({
+      query: (body) => ({
+        url: "/staff/register",
+        method: "POST",
+        body: { ...body, role: "doctor" },
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Register Receptionist (Admin Only) ──
+    registerReceptionist: builder.mutation({
+      query: (body) => ({
+        url: "/staff/register",
+        method: "POST",
+        body: { ...body, role: "receptionist" },
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Get All Doctors ──
+    getDoctors: builder.query({
+      query: () => "/staff/doctors",
+      providesTags: ["User"],
+    }),
+
+    // ── Get All Receptionists ──
+    getReceptionists: builder.query({
+      query: () => "/staff/receptionists",
+      providesTags: ["User"],
+    }),
+
+    // ── Get System Analytics ──
+    getSystemAnalytics: builder.query({
+      query: () => "/staff/analytics/system",
+      providesTags: ["User"],
+    }),
+
+    // ── Verify Staff ──
+    verifyStaff: builder.mutation({
+      query: (staffId) => ({
+        url: `/staff/${staffId}/verify`,
+        method: "POST",
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Deactivate Staff ──
+    deactivateStaff: builder.mutation({
+      query: (staffId) => ({
+        url: `/staff/${staffId}/deactivate`,
+        method: "POST",
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Update Doctor ──
+    updateDoctor: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/staff/doctors/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Update Receptionist ──
+    updateReceptionist: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/staff/receptionists/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Delete Doctor ──
+    deleteDoctor: builder.mutation({
+      query: (id) => ({
+        url: `/staff/doctors/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Delete Receptionist ──
+    deleteReceptionist: builder.mutation({
+      query: (id) => ({
+        url: `/staff/receptionists/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Get Appointments ──
+    getAppointments: builder.query({
+      query: (params) => ({
+        url: "/appointments",
+        params,
+      }),
+      providesTags: ["User"],
+    }),
+
+    // ── Get Doctor Appointments ──
+    getDoctorAppointments: builder.query({
+      query: (doctorId) => `/appointments/doctor/${doctorId}`,
+      providesTags: ["User"],
+    }),
+
+    // ── Get Patient Appointments ──
+    getPatientAppointments: builder.query({
+      query: (patientId) => `/appointments/patient/${patientId}`,
+      providesTags: ["User"],
+    }),
+
+    // ── Get Diagnoses ──
+    getDiagnoses: builder.query({
+      query: () => "/diagnoses",
+      providesTags: ["User"],
+    }),
+
+    // ── Get Prescriptions ──
+    getPrescriptions: builder.query({
+      query: () => "/prescriptions",
+      providesTags: ["User"],
+    }),
+
+    // ── Get Available Slots ──
+    getAvailableSlots: builder.query({
+      query: ({ doctorId, date }) => ({
+        url: "/appointments/available-slots",
+        params: { doctorId, date },
+      }),
+      providesTags: ["User"],
+    }),
+
+    // ── Create Appointment (Book) ──
+    createAppointment: builder.mutation({
+      query: (body) => ({
+        url: "/appointments/book",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Update Appointment ──
+    updateAppointment: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/appointments/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Cancel Appointment ──
+    cancelAppointment: builder.mutation({
+      query: (id) => ({
+        url: `/appointments/${id}/cancel`,
+        method: "POST",
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -254,4 +419,24 @@ export const {
   useUpdateUserRoleMutation,
   useDeactivateAccountMutation,
   useDeleteUserMutation,
+  useRegisterDoctorMutation,
+  useRegisterReceptionistMutation,
+  useGetDoctorsQuery,
+  useGetReceptionistsQuery,
+  useGetSystemAnalyticsQuery,
+  useVerifyStaffMutation,
+  useDeactivateStaffMutation,
+  useUpdateDoctorMutation,
+  useUpdateReceptionistMutation,
+  useDeleteDoctorMutation,
+  useDeleteReceptionistMutation,
+  useGetAppointmentsQuery,
+  useGetDoctorAppointmentsQuery,
+  useGetPatientAppointmentsQuery,
+  useGetDiagnosesQuery,
+  useGetPrescriptionsQuery,
+  useGetAvailableSlotsQuery,
+  useCreateAppointmentMutation,
+  useUpdateAppointmentMutation,
+  useCancelAppointmentMutation,
 } = authApi;

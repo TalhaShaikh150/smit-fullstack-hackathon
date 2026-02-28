@@ -1,61 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { Card } from "../../components/ui/card";
+import { Loader2 } from "lucide-react";
+import {
+  useGetSystemAnalyticsQuery,
+  useGetDoctorsQuery,
+  useGetReceptionistsQuery,
+} from "../../features/auth/authApi";
 
 const AdminDashboard = () => {
   const user = useSelector(selectCurrentUser);
-  const [analytics, setAnalytics] = useState(null);
-  const [doctors, setDoctors] = useState([]);
-  const [receptionists, setReceptionists] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: analyticsRes, isLoading: analyticsLoading } =
+    useGetSystemAnalyticsQuery();
+  const { data: doctorsRes, isLoading: doctorsLoading } = useGetDoctorsQuery();
+  const { data: receptionistsRes, isLoading: receptionistsLoading } =
+    useGetReceptionistsQuery();
 
-  useEffect(() => {
-    fetchAdminData();
-  }, []);
+  const analytics = analyticsRes?.data;
+  const doctors = doctorsRes?.data || [];
+  const receptionists = receptionistsRes?.data || [];
 
-  const fetchAdminData = async () => {
-    try {
-      setLoading(true);
+  const isLoading = analyticsLoading || doctorsLoading || receptionistsLoading;
 
-      // Fetch system analytics
-      const analyticsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/staff/analytics/system`,
-        {
-          credentials: "include",
-        },
-      );
-      const analyticsData = await analyticsRes.json();
-      setAnalytics(analyticsData.data);
-
-      // Fetch all doctors
-      const doctorsRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/staff/doctors`,
-        {
-          credentials: "include",
-        },
-      );
-      const doctorsData = await doctorsRes.json();
-      setDoctors(doctorsData.data || []);
-
-      // Fetch all receptionists
-      const receptRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/staff/receptionists`,
-        {
-          credentials: "include",
-        },
-      );
-      const receptData = await receptRes.json();
-      setReceptionists(receptData.data || []);
-    } catch (error) {
-      console.error("Error fetching admin data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="p-6">Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center gap-2">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span>Loading dashboard...</span>
+      </div>
+    );
   }
 
   return (
@@ -115,9 +89,6 @@ const AdminDashboard = () => {
       <div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Doctors ({doctors.length})</h2>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Add Doctor
-          </button>
         </div>
         {doctors.length === 0 ? (
           <Card className="p-6">
@@ -136,20 +107,15 @@ const AdminDashboard = () => {
                     {doctor.specialization} | License: {doctor.licenseNumber}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <span
-                    className={`px-2 py-1 text-xs rounded font-semibold ${
-                      doctor.status === "active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {doctor.status}
-                  </span>
-                  <button className="text-blue-600 hover:underline">
-                    Edit
-                  </button>
-                </div>
+                <span
+                  className={`px-2 py-1 text-xs rounded font-semibold ${
+                    doctor.status === "active"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {doctor.status}
+                </span>
               </Card>
             ))}
           </div>
@@ -162,9 +128,6 @@ const AdminDashboard = () => {
           <h2 className="text-2xl font-bold">
             Receptionists ({receptionists.length})
           </h2>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            Add Receptionist
-          </button>
         </div>
         {receptionists.length === 0 ? (
           <Card className="p-6">
@@ -183,20 +146,15 @@ const AdminDashboard = () => {
                     {receptionist.department}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <span
-                    className={`px-2 py-1 text-xs rounded font-semibold ${
-                      receptionist.status === "active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {receptionist.status}
-                  </span>
-                  <button className="text-blue-600 hover:underline">
-                    Edit
-                  </button>
-                </div>
+                <span
+                  className={`px-2 py-1 text-xs rounded font-semibold ${
+                    receptionist.status === "active"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {receptionist.status}
+                </span>
               </Card>
             ))}
           </div>
