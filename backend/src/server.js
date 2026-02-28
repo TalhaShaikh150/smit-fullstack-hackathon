@@ -8,9 +8,12 @@ const startServer = async () => {
     await connectDB();
 
     const server = app.listen(env.PORT, () => {
-      logger.info(` Server running in ${env.NODE_ENV} mode on port ${env.PORT}`);
-      logger.info(` Health  → http://localhost:${env.PORT}/api/v1/health`);
-      logger.info(` Auth    → http://localhost:${env.PORT}/api/v1/auth`);
+      logger.info(
+        ` Server running in ${env.NODE_ENV} mode on port ${env.PORT}`,
+      );
+      const baseUrl = env.API_BASE_URL || `http://localhost:${env.PORT}/api/v1`;
+      logger.info(` Health  → ${baseUrl}/health`);
+      logger.info(` Auth    → ${baseUrl}/auth`);
     });
 
     // ── Graceful Shutdown ──

@@ -4,7 +4,8 @@ const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const buildMongoURI = () => {
-  const { DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HOST, MONGODB_URI } = process.env;
+  const { DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HOST, MONGODB_URI } =
+    process.env;
   if (MONGODB_URI) return MONGODB_URI;
   if (DB_USERNAME && DB_PASSWORD && DB_NAME && DB_HOST) {
     return `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?retryWrites=true&w=majority`;
@@ -29,6 +30,9 @@ const envConfig = Object.freeze({
   // Client
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
 
+  // API
+  API_BASE_URL: process.env.API_BASE_URL || null,
+
   // Cloudinary
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
@@ -48,7 +52,7 @@ const missing = required.filter((key) => !envConfig[key]);
 
 if (missing.length > 0) {
   throw new Error(
-    `❌ Missing required environment variables: ${missing.join(", ")}`
+    `❌ Missing required environment variables: ${missing.join(", ")}`,
   );
 }
 
