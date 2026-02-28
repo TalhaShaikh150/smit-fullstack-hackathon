@@ -12,4 +12,5 @@ export const ROUTES = Object.freeze({
   CONTACT: "/contact",
   LOGIN: "/login",
   REGISTER: "/register",
+  PROFILE: "/profile",
 });

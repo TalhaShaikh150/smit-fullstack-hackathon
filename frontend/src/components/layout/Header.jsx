@@ -59,52 +59,49 @@ const Header = () => {
           })}
         </nav>
 
-     {/* Auth Buttons */}
-<div className="hidden md:flex items-center gap-3">
-  {isAuthenticated ? (
-    <div className="flex items-center gap-3">
-      
-      {/* Avatar + Name */}
-      <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50">
-        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
-          {user?.avatar?.url ? (
-            <img
-              src={user.avatar.url}
-              alt={user?.name || "User Avatar"}
-              className="h-full w-full object-cover"
-            />
+        {/* Auth Buttons */}
+        <div className="hidden md:flex items-center gap-3">
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              {/* Avatar + Name */}
+              <Link
+                to={ROUTES.PROFILE}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+              >
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
+                  {user?.avatar?.url ? (
+                    <img
+                      src={user.avatar.url}
+                      alt={user?.name || "User Avatar"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4 text-primary" />
+                  )}
+                </div>
+
+                <div className="hidden sm:block">
+                  <p className="text-xs text-muted-foreground">Signed in as</p>
+                  <p className="text-sm font-medium">{user?.name}</p>
+                </div>
+              </Link>
+
+              {/* Logout Button */}
+              <Button variant="outline" size="sm" onClick={handleLogout}>
+                Logout
+              </Button>
+            </div>
           ) : (
-            <User className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={ROUTES.LOGIN}>Sign In</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link to={ROUTES.REGISTER}>Get Started</Link>
+              </Button>
+            </div>
           )}
         </div>
-
-        <div className="hidden sm:block">
-          <p className="text-xs text-muted-foreground">Signed in as</p>
-          <p className="text-sm font-medium">{user?.name}</p>
-        </div>
-      </div>
-
-      {/* Logout Button */}
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleLogout}
-      >
-        Logout
-      </Button>
-
-    </div>
-  ) : (
-    <div className="flex items-center gap-2">
-      <Button variant="ghost" size="sm" asChild>
-        <Link to={ROUTES.LOGIN}>Sign In</Link>
-      </Button>
-      <Button size="sm" asChild>
-        <Link to={ROUTES.REGISTER}>Get Started</Link>
-      </Button>
-    </div>
-  )}
-</div>
         {/* Mobile Toggle */}
         <button
           className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"

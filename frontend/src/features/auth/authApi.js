@@ -32,8 +32,8 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     const url = typeof args === "string" ? args : args?.url;
 
     // Don't try refresh for auth endpoints (avoids infinite loop)
-    const shouldSkip = skipRefreshEndpoints.some(
-      (endpoint) => url?.includes(endpoint)
+    const shouldSkip = skipRefreshEndpoints.some((endpoint) =>
+      url?.includes(endpoint),
     );
 
     if (!shouldSkip) {
@@ -41,7 +41,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       const refreshResult = await baseQuery(
         { url: "/auth/refresh-token", method: "POST" },
         api,
-        extraOptions
+        extraOptions,
       );
 
       if (refreshResult?.data?.success) {
@@ -125,6 +125,118 @@ export const authApi = createApi({
         }
       },
     }),
+
+    // ── Get All Users ──
+    getAllUsers: builder.query({
+      query: (params = {}) => ({
+        url: "/users",
+        params,
+      }),
+      providesTags: ["User"],
+    }),
+
+    // ── Get User By ID ──
+    getUserById: builder.query({
+      query: (id) => `/users/${id}`,
+      providesTags: ["User"],
+    }),
+
+    // ── Update Profile ──
+    updateProfile: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/users/${id}/profile`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["User"],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCredentials(data.data.user));
+        } catch {
+          // handled by component
+        }
+      },
+    }),
+
+    // ── Update Avatar ──
+    updateAvatar: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/users/${id}/avatar`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: ["User"],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCredentials(data.data.user));
+        } catch {
+          // handled by component
+        }
+      },
+    }),
+
+    // ── Remove Avatar ──
+    removeAvatar: builder.mutation({
+      query: (id) => ({
+        url: `/users/${id}/avatar`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setCredentials(data.data.user));
+        } catch {
+          // handled by component
+        }
+      },
+    }),
+
+    // ── Change Password ──
+    changePassword: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/users/${id}/change-password`,
+        method: "PATCH",
+        body,
+      }),
+    }),
+
+    // ── Update User Role ──
+    updateUserRole: builder.mutation({
+      query: ({ id, role }) => ({
+        url: `/users/${id}/role`,
+        method: "PATCH",
+        body: { role },
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // ── Deactivate Account ──
+    deactivateAccount: builder.mutation({
+      query: (id) => ({
+        url: `/users/${id}/deactivate`,
+        method: "PATCH",
+      }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(logout());
+        } catch {
+          // handled by component
+        }
+      },
+    }),
+
+    // ── Delete User ──
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -133,4 +245,13 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useGetMeQuery,
+  useGetAllUsersQuery,
+  useGetUserByIdQuery,
+  useUpdateProfileMutation,
+  useUpdateAvatarMutation,
+  useRemoveAvatarMutation,
+  useChangePasswordMutation,
+  useUpdateUserRoleMutation,
+  useDeactivateAccountMutation,
+  useDeleteUserMutation,
 } = authApi;

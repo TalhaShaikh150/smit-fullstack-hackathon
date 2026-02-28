@@ -13,6 +13,7 @@ import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
+import ProfilePage from "@/pages/ProfilePage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
 const router = createBrowserRouter([
@@ -53,15 +54,14 @@ const router = createBrowserRouter([
       },
 
       // ── Protected Pages (only logged-in users) ──
-      // Example: Add your protected pages here
-      // {
-      //   path: "dashboard",
-      //   element: (
-      //     <ProtectedRoute>
-      //       <DashboardPage />
-      //     </ProtectedRoute>
-      //   ),
-      // },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
 
       // ── Admin Only Pages ──
       // {
