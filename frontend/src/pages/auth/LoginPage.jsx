@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { Eye, EyeOff, LogIn, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useAuth from "@/hooks/useAuth";
+import { selectCurrentUser } from "@/features/auth/authSlice";
 import { ROUTES } from "@/utils/constants";
 import { toast } from "sonner";
 
@@ -22,10 +24,8 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
 
   const { login, isLoggingIn } = useAuth();
+  const user = useSelector(selectCurrentUser);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = location.state?.from?.pathname || ROUTES.HOME;
 
   const validateForm = () => {
     const newErrors = {};
@@ -57,12 +57,21 @@ const LoginPage = () => {
     if (!validateForm()) return;
 
     try {
-      await login(formData).unwrap();
+      const response = await login(formData).unwrap();
       toast.success("Logged in successfully!");
-      navigate(from, { replace: true });
+
+      const role = response.data?.user?.role || user?.role;
+      const dashboard =
+        {
+          patient: "/patient/dashboard",
+          doctor: "/doctor/dashboard",
+          receptionist: "/receptionist/dashboard",
+          admin: "/admin/dashboard",
+        }[role] || "/";
+
+      setTimeout(() => navigate(dashboard, { replace: true }), 300);
     } catch (err) {
-      const message =
-        err?.data?.message || "Login failed. Please try again.";
+      const message = err?.data?.message || "Login failed. Please try again.";
       toast.error(message);
 
       if (err?.data?.errors?.length) {
@@ -131,10 +140,7 @@ const LoginPage = () => {
                 <Label htmlFor="password" className="text-sm font-medium">
                   Password
                 </Label>
-                <Link
-                  to="#"
-                  className="text-xs text-primary hover:underline"
-                >
+                <Link to="#" className="text-xs text-primary hover:underline">
                   Forgot password?
                 </Link>
               </div>

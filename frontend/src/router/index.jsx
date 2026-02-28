@@ -16,6 +16,12 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import ProfilePage from "@/pages/ProfilePage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
+// Role-based dashboards
+import PatientDashboard from "@/pages/patient/PatientDashboard";
+import DoctorDashboard from "@/pages/doctor/DoctorDashboard";
+import ReceptionistDashboard from "@/pages/receptionist/ReceptionistDashboard";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -63,15 +69,39 @@ const router = createBrowserRouter([
         ),
       },
 
-      // ── Admin Only Pages ──
-      // {
-      //   path: "admin",
-      //   element: (
-      //     <ProtectedRoute allowedRoles={["admin"]}>
-      //       <AdminPage />
-      //     </ProtectedRoute>
-      //   ),
-      // },
+      // ── Role-based Dashboards ──
+      {
+        path: "patient/dashboard",
+        element: (
+          <ProtectedRoute allowedRoles={["patient"]}>
+            <PatientDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "doctor/dashboard",
+        element: (
+          <ProtectedRoute allowedRoles={["doctor"]}>
+            <DoctorDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "receptionist/dashboard",
+        element: (
+          <ProtectedRoute allowedRoles={["receptionist"]}>
+            <ReceptionistDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/dashboard",
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
 
       // ── 404 ──
       {

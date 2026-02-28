@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
         values: Object.values(ROLES),
         message: "{VALUE} is not a valid role",
       },
-      default: ROLES.USER,
+      default: ROLES.PATIENT,
     },
     avatar: {
       public_id: { type: String, default: "" },

@@ -1,8 +1,9 @@
 const ROLES = Object.freeze({
-  USER: "user",
-  ADMIN: "admin",
+  PATIENT: 'patient',
+  DOCTOR: 'doctor',
+  RECEPTIONIST: 'receptionist',
+  ADMIN: 'admin'
 });
-
 const HTTP_STATUS = Object.freeze({
   OK: 200,
   CREATED: 201,

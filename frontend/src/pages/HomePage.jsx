@@ -1,236 +1,167 @@
-import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import useAuth from "@/hooks/useAuth";
 import { ROUTES } from "@/utils/constants";
-import {
-  Shield,
-  Zap,
-  Lock,
-  Database,
-  Gauge,
-  Boxes,
-  ArrowRight,
-  CheckCircle2,
-} from "lucide-react";
 
-const HomePage = () => {
-  const { isAuthenticated, user } = useAuth();
+// Mock Data for Doctors (In a real app, this comes from your Backend)
+const topDoctors = [
+  {
+    id: 1,
+    name: "Dr. Richard James",
+    specialty: "General Physician",
+    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=500&auto=format&fit=crop",
+    available: true,
+  },
+  {
+    id: 2,
+    name: "Dr. Emily Larson",
+    specialty: "Gynecologist",
+    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=500&auto=format&fit=crop",
+    available: true,
+  },
+  {
+    id: 3,
+    name: "Dr. Sarah Patel",
+    specialty: "Dermatologist",
+    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=500&auto=format&fit=crop",
+    available: true,
+  },
+  {
+    id: 4,
+    name: "Dr. Christopher Lee",
+    specialty: "Pediatrician",
+    image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=500&auto=format&fit=crop",
+    available: true,
+  },
+  {
+    id: 5,
+    name: "Dr. Jennifer Garcia",
+    specialty: "Neurologist",
+    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=500&auto=format&fit=crop",
+    available: true,
+  },
+];
 
-  const features = [
-    {
-      icon: Shield,
-      title: "Secure Authentication",
-      desc: "JWT access & refresh tokens with HTTP-only cookies and CORS protection",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      icon: Lock,
-      title: "RBAC & Ownership",
-      desc: "Role-based access control with resource ownership protection",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      icon: Zap,
-      title: "Production Ready",
-      desc: "Rate limiting, validation, and error handling at every layer",
-      color: "from-orange-500 to-red-500",
-    },
-    {
-      icon: Database,
-      title: "MongoDB Integration",
-      desc: "Mongoose ORM with optimized queries and data validation",
-      color: "from-green-500 to-teal-500",
-    },
-    {
-      icon: Gauge,
-      title: "Performance",
-      desc: "Optimized caching, pagination, and efficient API endpoints",
-      color: "from-yellow-500 to-orange-500",
-    },
-    {
-      icon: Boxes,
-      title: "Modular Architecture",
-      desc: "Well-organized project structure for scalability",
-      color: "from-indigo-500 to-blue-500",
-    },
-  ];
-
-  const techStack = [
-    {
-      category: "Frontend",
-      items: ["React 18", "Vite", "Redux Toolkit", "RTK Query"],
-    },
-    {
-      category: "Backend",
-      items: ["Node.js", "Express", "MongoDB", "Mongoose"],
-    },
-    { category: "Tools", items: ["JWT", "Bcrypt", "Multer"] },
-  ];
-
+const Home = () => {
   return (
-    <div className="w-full">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-muted/30 px-4 py-12 md:py-32">
-        <div className="container mx-auto max-w-6xl">
-          {/* Background Elements */}
-          <div className="absolute inset-0 -z-10 overflow-hidden">
-            <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
-            <div className="absolute -right-40 -bottom-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
-          </div>
-
-          <div className="space-y-8 text-center">
-            {/* Badge */}
-            <div className="inline-block">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary">
-                <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                Production Ready MERN Stack
-              </span>
+    <div className="container mx-auto px-4 py-8 space-y-24">
+      
+      {/* --- HERO SECTION --- */}
+      <section className="bg-indigo-500 rounded-3xl text-white flex flex-col md:flex-row items-center relative overflow-hidden px-6 md:px-16 py-10 md:py-0 min-h-[500px]">
+        
+        {/* Left Content */}
+        <div className="md:w-1/2 flex flex-col justify-center gap-6 z-10 py-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+            Book Appointment <br />
+            With Trusted Doctors
+          </h1>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-4">
+               {/* Mock User Avatars */}
+               {[1,2,3].map(i => (
+                 <img key={i} className="w-10 h-10 rounded-full border-2 border-white object-cover" src={`https://randomuser.me/api/portraits/thumb/men/${i+20}.jpg`} alt="" />
+               ))}
             </div>
+            <p className="text-sm text-indigo-100 font-light leading-snug">
+              Simply browse through our extensive list of <br className="hidden md:block"/>
+              trusted doctors, schedule your appointment hassle-free.
+            </p>
+          </div>
 
-            {/* Heading */}
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-7xl font-bold tracking-tighter">
-                Build Modern Apps{" "}
-                <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
-                  Faster
-                </span>
-              </h1>
-              <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground leading-relaxed">
-                A production-ready MERN stack boilerplate with enterprise-grade
-                authentication, role-based access control, and everything you
-                need to launch your next project in days, not months.
-              </p>
-            </div>
+          <Link 
+            to={ROUTES.REGISTER} 
+            className="bg-white text-indigo-600 px-8 py-3 rounded-full font-semibold flex items-center gap-2 w-fit hover:scale-105 transition-transform shadow-lg"
+          >
+            Book appointment <ArrowRight size={20} />
+          </Link>
+        </div>
 
-            {/* CTA Buttons */}
-            {isAuthenticated ? (
-              <div className="space-y-4">
-                <div className="inline-block rounded-lg border border-primary/20 bg-primary/5 px-6 py-4 text-center">
-                  <p className="text-lg">
-                    Welcome back,{" "}
-                    <strong className="text-primary">{user?.name}</strong>! 👋
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Role: <span className="font-semibold">{user?.role}</span>
-                  </p>
+        {/* Right Image */}
+        <div className="md:w-1/2 relative h-full flex items-end justify-end mt-8 md:mt-0">
+          <img 
+            src="https://images.unsplash.com/photo-1622902046580-2b47f47f5471?q=80&w=1000&auto=format&fit=crop" // Professional Group Photo
+            alt="Doctors Team" 
+            className="w-full max-w-md md:absolute bottom-0 right-0 object-contain drop-shadow-2xl"
+          />
+        </div>
+      </section>
+
+
+      {/* --- SPECIALTY SECTION (Bonus: Adds to functionality) --- */}
+      <section className="text-center space-y-8">
+        <h2 className="text-3xl font-bold text-slate-900">Find by Specialty</h2>
+        <p className="text-slate-500 max-w-lg mx-auto">Simply browse through our extensive list of trusted doctors, schedule your appointment hassle-free.</p>
+        
+        <div className="flex flex-wrap justify-center gap-8">
+            {['General physician', 'Gynecologist', 'Dermatologist', 'Pediatricians', 'Neurologist'].map((item) => (
+                <div key={item} className="flex flex-col items-center gap-3 cursor-pointer group hover:translate-y-[-10px] transition-transform duration-300">
+                    <div className="h-20 w-20 rounded-full bg-indigo-50 flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:bg-indigo-100 transition-colors">
+                        {/* Placeholder icons - replace with SVGs for specialty */}
+                        <img src={`https://ui-avatars.com/api/?name=${item.charAt(0)}&background=transparent&color=4F46E5&size=40`} alt={item} />
+                    </div>
+                    <span className="text-xs font-medium text-slate-600">{item}</span>
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button size="lg" asChild className="gap-2 px-8">
-                  <Link to={ROUTES.REGISTER}>
-                    Get Started <ArrowRight className="h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link to={ROUTES.LOGIN}>Sign In</Link>
-                </Button>
-              </div>
-            )}
-          </div>
+            ))}
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="px-4 py-16 md:py-24">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Enterprise Features
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Everything you need for production-grade applications
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map(({ icon: Icon, title, desc, color }) => (
-              <div
-                key={title}
-                className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur transition-all hover:border-primary/50 hover:bg-card hover:shadow-lg"
-              >
-                {/* Gradient Background */}
-                <div
-                  className={`absolute inset-0 -z-10 bg-gradient-to-br ${color} opacity-0 transition-opacity group-hover:opacity-5`}
-                />
+      {/* --- TOP DOCTORS GRID --- */}
+      <section className="text-center space-y-10">
+        <div className="space-y-2">
+            <h2 className="text-3xl font-bold text-slate-900">Top Doctors to Book</h2>
+            <p className="text-slate-500">Simply browse through our extensive list of trusted doctors.</p>
+        </div>
 
-                <div className="p-6 space-y-4">
-                  <div
-                    className={`inline-flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br ${color} text-white`}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold text-lg">{title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {desc}
-                    </p>
-                  </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {topDoctors.map((doc) => (
+                <div 
+                    key={doc.id} 
+                    className="border border-indigo-50 rounded-xl overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-2 transition-all duration-300 bg-white group"
+                >
+                    <div className="bg-indigo-50/50 h-52 flex items-end justify-center pt-4">
+                        <img src={doc.image} alt={doc.name} className="h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    <div className="p-4 text-left">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span className="text-xs text-green-500 font-medium">Available</span>
+                        </div>
+                        <h3 className="font-bold text-slate-900 text-lg">{doc.name}</h3>
+                        <p className="text-slate-500 text-sm">{doc.specialty}</p>
+                    </div>
                 </div>
-              </div>
             ))}
-          </div>
         </div>
+        
+        <button className="bg-indigo-50 text-indigo-600 px-10 py-3 rounded-full font-medium hover:bg-indigo-100 transition-colors mt-8">
+            more
+        </button>
       </section>
 
-      {/* Tech Stack */}
-      <section className="px-4 py-16 md:py-24 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Built With Modern Tech
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Leveraging the best tools and frameworks in the ecosystem
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {techStack.map(({ category, items }) => (
-              <div
-                key={category}
-                className="rounded-xl border border-border/50 bg-card p-6 space-y-4"
-              >
-                <h3 className="font-semibold text-lg text-primary">
-                  {category}
-                </h3>
-                <ul className="space-y-3">
-                  {items.map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* --- CTA BANNER --- */}
+      <section className="bg-indigo-500 rounded-3xl flex flex-col md:flex-row items-center px-6 md:px-16 py-12 md:py-0 min-h-[400px] relative overflow-hidden">
+         <div className="md:w-1/2 space-y-6 z-10 py-10">
+             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                 Book Appointment <br /> With 100+ Trusted Doctors
+             </h2>
+             <button className="bg-white text-indigo-600 px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform">
+                 Create account
+             </button>
+         </div>
+         
+         <div className="md:w-1/2 relative h-full flex items-end justify-center md:justify-end mt-10 md:mt-0">
+             <img 
+                src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=1000&auto=format&fit=crop" 
+                alt="Doctor Pointing" 
+                className="w-[300px] lg:w-[380px] object-contain md:absolute bottom-0"
+             />
+         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="px-4 py-16 md:py-24">
-        <div className="container mx-auto max-w-4xl">
-          <div className="rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 p-8 md:p-12 text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Ready to get started?
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Join developers building production-ready applications with our
-              comprehensive boilerplate. Start in minutes, not months.
-            </p>
-            {!isAuthenticated && (
-              <Button size="lg" asChild className="gap-2">
-                <Link to={ROUTES.REGISTER}>
-                  Create Your First Project <ArrowRight className="h-5 w-5" />
-                </Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
 
-export default HomePage;
+export default Home;
