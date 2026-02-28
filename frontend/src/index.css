@@ -9,16 +9,70 @@
 /* 3. Then your theme variables */
 @layer base {
   :root {
-    /* ... your colors ... */
+    /* Light theme colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.6%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.6%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 72.2% 50.6%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --primary: 12 6.5% 15.1%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 12 6.5% 15.1%;
+    --ring: 12 6.5% 15.1%;
+    --ring-offset-background: 0 0% 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Dark theme colors */
+      --background: 12 6.5% 15.1%;
+      --foreground: 0 0% 98%;
+      --card: 12 6.5% 15.1%;
+      --card-foreground: 0 0% 98%;
+      --popover: 12 6.5% 15.1%;
+      --popover-foreground: 0 0% 98%;
+      --muted: 12 6.5% 15.1%;
+      --muted-foreground: 0 0% 63.9%;
+      --accent: 0 72.2% 50.6%;
+      --accent-foreground: 12 6.5% 15.1%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 12 6.5% 15.1%;
+      --input: 12 6.5% 15.1%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 12 6.5% 15.1%;
+      --secondary: 12 6.5% 15.1%;
+      --secondary-foreground: 0 0% 98%;
+      --ring: 0 0% 98%;
+      --ring-offset-background: 12 6.5% 15.1%;
+    }
   }
 
   /* 4. Apply the fonts globally */
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Plus Jakarta Sans', sans-serif; /* Global Body Font */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Global Body Font */
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', sans-serif; /* Global Heading Font */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Outfit', sans-serif;
+    /* Global Heading Font */
   }
 }
