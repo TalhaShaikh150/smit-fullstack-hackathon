@@ -6,10 +6,7 @@ const router = express.Router();
 
 // public endpoints
 // Get all doctors (no authentication) - shown to patients/guests
-router.get(
-  "/doctors",
-  staffController.getDoctors,
-);
+router.get("/doctors", staffController.getDoctors);
 
 // Apply auth middleware to remaining routes
 router.use(authenticate);

@@ -18,7 +18,11 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
+    // redirect guests to the appropriate login page based on URL context
+    const loginRoute = location.pathname.startsWith("/admin")
+      ? "/admin/login"
+      : ROUTES.LOGIN;
+    return <Navigate to={loginRoute} state={{ from: location }} replace />;
   }
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
