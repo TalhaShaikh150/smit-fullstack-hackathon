@@ -30,6 +30,11 @@ const envConfig = Object.freeze({
   // Client
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
 
+  // CORS
+  ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((u) => u.trim())
+    : [process.env.CLIENT_URL],
+
   // API
   API_BASE_URL: process.env.API_BASE_URL || null,
 
