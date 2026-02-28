@@ -51,7 +51,7 @@ const Header = () => {
             <Sparkles size={18} fill="currentColor" className="text-white/90" />
           </div>
           <span className="text-xl font-bold text-slate-800 tracking-tight group-hover:text-indigo-600 transition-colors">
-            Prescripto
+            HealthStack
           </span>
         </Link>
 
@@ -242,7 +242,7 @@ const Header = () => {
                 <Sparkles size={16} fill="currentColor" />
               </div>
               <span className="font-bold text-lg text-slate-800">
-                Prescripto
+                HealthStack
               </span>
             </div>
             <button

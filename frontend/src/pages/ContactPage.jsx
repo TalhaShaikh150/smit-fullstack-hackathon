@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Mail, Phone, MapPin, Send, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, AlertCircle, Clock, ArrowRight } from "lucide-react";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -15,52 +15,14 @@ const ContactPage = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const contactInfo = [
-    {
-      icon: Mail,
-      label: "Email",
-      value: "support@mernboilerplate.com",
-      href: "mailto:support@mernboilerplate.com",
-    },
-    {
-      icon: Phone,
-      label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
-    },
-    {
-      icon: MapPin,
-      label: "Location",
-      value: "San Francisco, CA",
-      href: "#",
-    },
-  ];
-
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!formData.subject.trim()) {
-      newErrors.subject = "Subject is required";
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = "Message is required";
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Message must be at least 10 characters";
-    }
-
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Invalid email";
+    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -68,9 +30,7 @@ const ContactPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
@@ -79,259 +39,159 @@ const ContactPage = () => {
 
     setIsSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Message sent successfully! We'll get back to you soon.");
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API
+      toast.success("Message sent successfully!");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
-      toast.error("Failed to send message. Please try again.");
+      toast.error("Failed to send message.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="w-full">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-muted/30 px-4 py-12 md:py-24">
-        <div className="container mx-auto max-w-4xl">
-          <div className="absolute inset-0 -z-10 overflow-hidden">
-            <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
-            <div className="absolute -right-40 -bottom-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
-          </div>
+    <div className="container mx-auto px-4 pt-28 pb-16 font-[Plus_Jakarta_Sans]">
+      
+      {/* --- PAGE TITLE --- */}
+      <div className="text-center text-2xl font-[Outfit] text-slate-500 mb-16">
+        <p>CONTACT <span className="font-bold text-slate-800">US</span></p>
+      </div>
 
-          <div className="space-y-6 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold">Get in Touch</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Have questions or feedback? We'd love to hear from you. Send us a
-              message and we'll respond as soon as possible.
-            </p>
-          </div>
-        </div>
-      </section>
+      <div className="flex flex-col lg:flex-row gap-12 max-w-6xl mx-auto">
+        
+        {/* --- LEFT: CONTACT INFO --- */}
+        <div className="flex-1 flex flex-col justify-center gap-10">
+          <img 
+            src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1000&auto=format&fit=crop" 
+            alt="Clinic Reception" 
+            className="w-full h-[300px] object-cover rounded-2xl shadow-lg mb-4"
+          />
 
-      {/* Contact Section */}
-      <section className="px-4 py-16 md:py-24">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Contact Info */}
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
-                <p className="text-muted-foreground mb-8">
-                  Reach out to us through any of these channels. We're here to help!
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {contactInfo.map(({ icon: Icon, label, value, href }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    className="flex gap-4 p-4 rounded-lg border border-border/50 hover:border-primary/50 hover:bg-muted/50 transition-all group"
-                  >
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                        {label}
-                      </p>
-                      <p className="font-medium text-sm group-hover:text-primary transition-colors">
-                        {value}
-                      </p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-
-              {/* Response Time */}
-              <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-4 space-y-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <p className="font-medium text-sm text-green-700 dark:text-green-400">
-                    Quick Response
-                  </p>
+          <div className="space-y-6">
+             <h3 className="text-lg font-bold text-slate-800 font-[Outfit] uppercase tracking-wide">
+                Our Office
+             </h3>
+             
+             <div className="flex items-start gap-4 text-slate-600">
+                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600">
+                   <MapPin size={20} />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  We typically respond within 24 hours
-                </p>
-              </div>
-            </div>
+                <div>
+                   <p className="font-medium text-slate-900">San Francisco HQ</p>
+                   <p className="text-sm">54709 Willms Station</p>
+                   <p className="text-sm">Suite 350, Washington, USA</p>
+                </div>
+             </div>
 
-            {/* Contact Form */}
-            <div className="lg:col-span-2">
-              <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name Field */}
-                  <div className="space-y-3">
-                    <Label htmlFor="name" className="text-sm font-medium">
-                      Full Name
-                    </Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="John Doe"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={`transition-colors ${
-                        errors.name
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : ""
-                      }`}
-                    />
-                    {errors.name && (
-                      <p className="text-sm text-destructive flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4" />
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
+             <div className="flex items-start gap-4 text-slate-600">
+                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600">
+                   <Phone size={20} />
+                </div>
+                <div>
+                   <p className="font-medium text-slate-900">Phone</p>
+                   <p className="text-sm hover:text-indigo-600 transition-colors cursor-pointer">+1 (415) 555-0132</p>
+                </div>
+             </div>
 
-                  {/* Email Field */}
-                  <div className="space-y-3">
-                    <Label htmlFor="email" className="text-sm font-medium">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`transition-colors ${
-                        errors.email
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : ""
-                      }`}
-                    />
-                    {errors.email && (
-                      <p className="text-sm text-destructive flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4" />
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
+             <div className="flex items-start gap-4 text-slate-600">
+                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0 text-indigo-600">
+                   <Mail size={20} />
+                </div>
+                <div>
+                   <p className="font-medium text-slate-900">Email</p>
+                   <p className="text-sm hover:text-indigo-600 transition-colors cursor-pointer">support@prescripto.com</p>
+                </div>
+             </div>
+          </div>
 
-                  {/* Subject Field */}
-                  <div className="space-y-3">
-                    <Label htmlFor="subject" className="text-sm font-medium">
-                      Subject
-                    </Label>
-                    <Input
-                      id="subject"
-                      name="subject"
-                      type="text"
-                      placeholder="How can we help?"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className={`transition-colors ${
-                        errors.subject
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : ""
-                      }`}
-                    />
-                    {errors.subject && (
-                      <p className="text-sm text-destructive flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4" />
-                        {errors.subject}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Message Field */}
-                  <div className="space-y-3">
-                    <Label htmlFor="message" className="text-sm font-medium">
-                      Message
-                    </Label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      placeholder="Tell us what's on your mind..."
-                      rows={5}
-                      className={`flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none transition-colors ${
-                        errors.message
-                          ? "border-destructive focus-visible:ring-destructive"
-                          : ""
-                      }`}
-                    />
-                    {errors.message && (
-                      <p className="text-sm text-destructive flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4" />
-                        {errors.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    className="w-full h-11 gap-2"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        Send Message
-                        <Send className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </div>
-            </div>
+          <div className="pt-6 border-t border-slate-100">
+             <h3 className="text-lg font-bold text-slate-800 font-[Outfit] uppercase tracking-wide mb-4">
+                Careers at Prescripto
+             </h3>
+             <p className="text-slate-600 text-sm mb-6">
+                Learn more about our teams and job openings.
+             </p>
+             <Button variant="outline" className="border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white rounded-none px-8 py-6 h-auto transition-all">
+                Explore Jobs
+             </Button>
           </div>
         </div>
-      </section>
 
-      {/* FAQ Section */}
-      <section className="px-4 py-16 md:py-24 bg-muted/30">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Frequently Asked Questions</h2>
-            <p className="text-muted-foreground">
-              Quick answers to common questions
-            </p>
-          </div>
+        {/* --- RIGHT: CONTACT FORM --- */}
+        <div className="flex-1 bg-white p-8 md:p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100">
+           <div className="mb-8">
+              <h3 className="text-2xl font-bold text-slate-800 font-[Outfit]">Send us a message</h3>
+              <p className="text-slate-500 mt-2">
+                 We typically reply within 24 hours.
+              </p>
+           </div>
 
-          <div className="space-y-4">
-            {[
-              {
-                q: "What is the typical response time?",
-                a: "We aim to respond to all inquiries within 24 hours during business days.",
-              },
-              {
-                q: "Can I use this for commercial projects?",
-                a: "Yes! This boilerplate is open source and can be used for any purpose.",
-              },
-              {
-                q: "Is technical support included?",
-                a: "We provide community support via GitHub discussions and issues.",
-              },
-              {
-                q: "How do I report a bug?",
-                a: "Please create an issue on our GitHub repository with detailed information.",
-              },
-            ].map(({ q, a }) => (
-              <div
-                key={q}
-                className="rounded-lg border border-border/50 bg-card p-6 space-y-2"
+           <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                 <div className="space-y-2">
+                    <Label className="text-slate-700 font-medium">Your Name</Label>
+                    <Input
+                       name="name"
+                       value={formData.name}
+                       onChange={handleChange}
+                       placeholder="John Doe"
+                       className={`h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-600 rounded-xl ${errors.name ? "border-red-500" : ""}`}
+                    />
+                 </div>
+                 <div className="space-y-2">
+                    <Label className="text-slate-700 font-medium">Email Address</Label>
+                    <Input
+                       name="email"
+                       type="email"
+                       value={formData.email}
+                       onChange={handleChange}
+                       placeholder="john@example.com"
+                       className={`h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-600 rounded-xl ${errors.email ? "border-red-500" : ""}`}
+                    />
+                 </div>
+              </div>
+
+              <div className="space-y-2">
+                 <Label className="text-slate-700 font-medium">Subject</Label>
+                 <Input
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    placeholder="Appointment Inquiry"
+                    className={`h-12 bg-slate-50 border-slate-200 focus-visible:ring-indigo-600 rounded-xl ${errors.subject ? "border-red-500" : ""}`}
+                 />
+              </div>
+
+              <div className="space-y-2">
+                 <Label className="text-slate-700 font-medium">Message</Label>
+                 <textarea
+                    name="message"
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="How can we help you today?"
+                    className={`flex w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 disabled:opacity-50 resize-none ${errors.message ? "border-red-500" : ""}`}
+                 />
+              </div>
+
+              {Object.keys(errors).length > 0 && (
+                 <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm flex items-center gap-2">
+                    <AlertCircle size={16} />
+                    Please fill in all required fields.
+                 </div>
+              )}
+
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full h-14 text-lg font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg shadow-indigo-600/30 transition-all hover:-translate-y-1"
               >
-                <p className="font-semibold">{q}</p>
-                <p className="text-sm text-muted-foreground">{a}</p>
-              </div>
-            ))}
-          </div>
+                {isSubmitting ? "Sending..." : "Send Message"} <Send size={18} className="ml-2" />
+              </Button>
+           </form>
         </div>
-      </section>
+
+      </div>
     </div>
   );
 };

@@ -4,18 +4,18 @@ const { authenticate, authorize } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
-// Apply auth middleware to all routes
+// public endpoints
+// Get all doctors (no authentication) - shown to patients/guests
+router.get(
+  "/doctors",
+  staffController.getDoctors,
+);
+
+// Apply auth middleware to remaining routes
 router.use(authenticate);
 
 // Register staff (admin only)
 router.post("/register", authorize("admin"), staffController.registerStaff);
-
-// Get all doctors
-router.get(
-  "/doctors",
-  authorize("admin", "receptionist"),
-  staffController.getDoctors,
-);
 
 // Get all receptionists
 router.get(
